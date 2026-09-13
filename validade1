@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="pt-BR"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260911-05-06910f9","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Canva Sans":"YAFLd8sKbwc,2","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Libre Baskerville":"YACgEUFdPdA,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YADLjI9qxTA,0","Nunito":"YACgEX8C5Gg,0","Oleo Script":"YACgEQQ14jI,0","Phantom Sans":"YAHO2E8Pb88,0","Playfair Display":"YACgEYmuCJE,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YADWjpfPmdk,0","Raleway":"YACgEVg3xZg,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Ubuntu":"YACgERDU--Q,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YADlN8CFZ8Q,0","ui-sans-serif":"YACkoN-xg4g,0"}}');</script><script src="/_sdk/c21197326e9a1154.telemetry_sdk.js" integrity="sha512-Aqwl+NmLtKBcMQM4HY+W9lmBHa+zP5MqSEuYfCjkzt4xeOSv2xNz81cCp7JyXBVrY+zojg5o94FHY/R31v2d3Q=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Validade</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="/_sdk/efe904fe8a212716.data_sdk.js" integrity="sha512-oiO0pmn5llS1uDeB2l690YywxqOe/a0U1kzY6RGaLZXtyh9YjTk1CUoK/bJUugc1QbUaJMJ3IE1MtpNY5NBZCw=="></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Fraunces:opsz,wght@9..144,700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #18332b;
+      --cream: #f5f3eb;
+      --paper: #fffdf8;
+      --line: #d9dfd6;
+      --sage: #dceee1;
+      --green: #26734d;
+      --orange: #bd6c22;
+      --red: #b94343;
+    }
+
+    * { box-sizing: border-box; }
+    body { font-family: "DM Sans", sans-serif; color: var(--ink); }
+    .display-font { font-family: "Fraunces", serif; }
+    .app-shell { width: 100%; min-height: calc(100 * min(var(--vh, 1vh), 1vh)); }
+    .paper-card { box-shadow: 0 8px 24px rgba(24, 51, 43, .08); }
+    .drawer { transition: transform .28s ease, opacity .28s ease; }
+    .drawer.closed { transform: translateY(100%); opacity: 0; pointer-events: none; }
+    .modal-layer { transition: opacity .2s ease; }
+    .modal-layer.hidden-modal { opacity: 0; pointer-events: none; }
+    .toast { transform: translateY(120%); transition: transform .25s ease; }
+    .toast.show { transform: translateY(0); }
+    .product-card { transition: transform .18s ease, box-shadow .18s ease; }
+    .product-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(24, 51, 43, .12); }
+    .status-valid { background: #dceee1; color: #1e633f; }
+    .status-soon { background: #fce7c7; color: #9a551a; }
+    .status-expired { background: #f9d9d7; color: #9e3535; }
+    .status-discarded { background: #e6e8e6; color: #5c675f; }
+    .photo-fallback { background: linear-gradient(135deg, #d9ead9, #f4dfb9); }
+    input, select, textarea { outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: #26734d !important; box-shadow: 0 0 0 3px rgba(38,115,77,.14); }
+    button:focus-visible, a:focus-visible { outline: 3px solid #bd6c22; outline-offset: 3px; }
+
+    @media (min-width: 768px) {
+      .drawer { max-width: 620px; left: 50%; right: auto; transform: translate(-50%, 12%); border-radius: 28px 28px 0 0; }
+      .drawer.closed { transform: translate(-50%, 110%); }
+    }
+  </style>
+  <script src="/_sdk/6125e8aa3c264a2d.resizing_sdk.js" type="text/javascript" integrity="sha512-+j9iK2FF/yFSTU389rFqKj3v0s1ELh1r0aj3mqpsVRZujaeWi0WgN7jmTcWLcBq91dz3NCEyXqMtHbwpOxhDYg=="></script>
+ </head>
+ <body data-template-id="__page-root" style="background: rgb(245, 243, 235);">
+  <div class="app-shell w-full">
+   <header data-template-id="app-header" class="canva-header sticky top-0 z-20 border-b px-4 py-4" style="background:#fffdf8;border-color:#d9dfd6;">
+    <div class="mx-auto flex max-w-5xl items-center justify-between gap-3">
+     <div class="min-w-0">
+      <p data-template-id="header-kicker" class="canva-text text-xs font-bold uppercase tracking-[0.18em]" style="color: rgb(38, 115, 77); font-weight: 700; font-style: normal; font-size: 12px; letter-spacing: 0.12rem;">Estoque consciente</p>
+      <h1 data-template-id="app-title" class="canva-text display-font mt-1 leading-none" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 32px;">Controle de Validade</h1>
+     </div>
+     <div class="flex items-center gap-2"><button id="settings-button" data-template-id="settings-button" type="button" class="canva-button inline-flex h-11 w-11 items-center justify-center rounded-full border transition hover:bg-[#dceee1]" style="background:#fffdf8;color:#18332b;border-color:#d9dfd6;" aria-label="Configurar alertas"> <i data-lucide="sliders-horizontal" aria-hidden="true"></i> </button> <button id="open-export-button" data-template-id="export-button" type="button" class="canva-button inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-bold shadow-sm transition hover:brightness-95" style="background: rgb(38, 115, 77); color: rgb(255, 255, 255); font-weight: 700;"> <i data-lucide="file-down" class="h-4 w-4" aria-hidden="true"></i> <span data-template-id="export-button-text" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Exportar PDF</span> </button>
+     </div>
+    </div>
+   </header>
+   <main class="mx-auto w-full max-w-5xl px-4 pb-28 pt-5">
+    <section aria-labelledby="summary-heading">
+     <div class="mb-3 flex items-end justify-between">
+      <h2 id="summary-heading" data-template-id="summary-title" class="canva-text text-sm font-bold uppercase tracking-[0.14em]" style="color: rgb(96, 113, 104); font-weight: 700; font-style: normal; font-size: 13px; letter-spacing: 0.1rem;">Resumo do estoque</h2>
+      <p id="product-count" class="text-sm font-medium text-[#607168]" aria-live="polite"></p>
+     </div>
+     <div class="grid grid-cols-3 gap-3">
+      <article data-template-id="summary-valid-card" class="canva-card paper-card rounded-2xl p-3" style="background:#dceee1;">
+       <p data-template-id="summary-valid-label" class="canva-text text-xs font-semibold" style="color: rgb(30, 99, 63); font-weight: 600; font-style: normal; font-size: 12px;">Válidos</p>
+       <p id="valid-total" class="mt-2 text-2xl font-bold"></p>
+      </article>
+      <article data-template-id="summary-soon-card" class="canva-card paper-card rounded-2xl p-3" style="background:#fce7c7;">
+       <p data-template-id="summary-soon-label" class="canva-text text-xs font-semibold" style="color: rgb(154, 85, 26); font-weight: 600; font-style: normal; font-size: 12px;">Em alerta</p>
+       <p id="soon-total" class="mt-2 text-2xl font-bold"></p>
+      </article>
+      <article data-template-id="summary-expired-card" class="canva-card paper-card rounded-2xl p-3" style="background:#f9d9d7;">
+       <p data-template-id="summary-expired-label" class="canva-text text-xs font-semibold" style="color: rgb(158, 53, 53); font-weight: 600; font-style: normal; font-size: 12px;">Vencidos</p>
+       <p id="expired-total" class="mt-2 text-2xl font-bold"></p>
+      </article>
+     </div>
+    </section>
+    <section data-template-id="search-panel" class="canva-panel paper-card mt-5 rounded-3xl border p-4" style="background:#fffdf8;border-color:#d9dfd6;" aria-label="Pesquisa e filtros"><label data-template-id="search-label" for="search-input" class="canva-text mb-2 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Encontre um produto</label>
+     <div class="relative"><i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#607168]" aria-hidden="true"></i> <input id="search-input" data-template-id="search-input" class="canva-input w-full rounded-2xl border py-3 pl-11 pr-4 text-base" style="background: rgb(255, 255, 255); border-color: rgb(217, 223, 214); color: rgb(24, 51, 43); font-weight: 400; font-style: normal; font-size: 16px;" type="search" placeholder="Buscar por nome ou código de barras">
+     </div>
+     <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div><label data-template-id="status-filter-label" for="status-filter" class="canva-text mb-1.5 block text-xs font-bold uppercase tracking-wide" style="color: rgb(96, 113, 104); font-weight: 700; font-style: normal; font-size: 11px;">Status</label> <select id="status-filter" class="w-full rounded-xl border bg-white px-3 py-3 text-sm" style="border-color:#d9dfd6;"> <option value="all">Todos os status</option> <option value="valid">Válido</option> <option value="soon">Vence em breve</option> <option value="expired">Vencido</option> <option value="discarded">Descartado</option> </select>
+      </div>
+      <div><label data-template-id="category-filter-label" for="category-filter" class="canva-text mb-1.5 block text-xs font-bold uppercase tracking-wide" style="color: rgb(96, 113, 104); font-weight: 700; font-style: normal; font-size: 11px;">Categoria</label> <select id="category-filter" class="w-full rounded-xl border bg-white px-3 py-3 text-sm" style="border-color:#d9dfd6;"> <option value="all">Todas as categorias</option> </select>
+      </div>
+      <div><label data-template-id="period-filter-label" for="period-filter" class="canva-text mb-1.5 block text-xs font-bold uppercase tracking-wide" style="color: rgb(96, 113, 104); font-weight: 700; font-style: normal; font-size: 11px;">Período</label> <select id="period-filter" class="w-full rounded-xl border bg-white px-3 py-3 text-sm" style="border-color:#d9dfd6;"> <option value="all">Qualquer período</option> <option value="7">Próximos 7 dias</option> <option value="30">Próximos 30 dias</option> <option value="90">Próximos 90 dias</option> <option value="past">Já vencidos</option> </select>
+      </div>
+     </div>
+    </section>
+    <section class="mt-6" aria-labelledby="products-heading">
+     <div class="mb-3 flex items-center justify-between">
+      <h2 id="products-heading" data-template-id="products-title" class="canva-text display-font" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 24px;">Produtos cadastrados</h2>
+      <p data-template-id="sort-note" class="canva-text text-xs font-medium" style="color: rgb(96, 113, 104); font-weight: 500; font-style: normal; font-size: 12px;">Validade mais próxima primeiro</p>
+     </div>
+     <div id="empty-state" data-template-id="empty-state" class="canva-banner hidden rounded-3xl border border-dashed p-8 text-center" style="background:#fffdf8;border-color:#d9dfd6;">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#dceee1] text-[#26734d]"><i data-lucide="package-plus" aria-hidden="true"></i>
+      </div>
+      <h3 data-template-id="empty-title" class="canva-text mt-4 font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 19px;">Sua lista está vazia</h3>
+      <p data-template-id="empty-description" class="canva-text mx-auto mt-2 max-w-sm text-sm" style="color: rgb(96, 113, 104); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.5;">Adicione o primeiro produto para começar a acompanhar os alertas de validade.</p>
+     </div>
+     <div id="product-list" class="space-y-3"></div>
+    </section>
+   </main><button id="add-product-button" data-template-id="add-product-button" type="button" class="canva-button fixed bottom-5 right-5 z-20 inline-flex items-center gap-2 rounded-full px-5 py-4 font-bold shadow-lg transition hover:brightness-95" style="background: rgb(38, 115, 77); color: rgb(255, 255, 255); font-weight: 700;"> <i data-lucide="plus" class="h-5 w-5" aria-hidden="true"></i> <span data-template-id="add-product-text" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Adicionar produto</span> </button>
+   <template id="product-template">
+    <article data-template-id="product-card" class="canva-card product-card flex cursor-pointer gap-3 rounded-3xl border p-3 paper-card" style="background:#fffdf8;border-color:#d9dfd6;" tabindex="0">
+     <div class="photo-fallback flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl"><img data-template-id="product-photo" class="canva-image hidden h-full w-full object-cover" loading="lazy"> <i data-lucide="package" class="photo-icon h-7 w-7 text-[#607168]" aria-hidden="true"></i>
+     </div>
+     <div class="min-w-0 flex-1">
+      <div class="flex items-start justify-between gap-2">
+       <h3 data-template-id="product-name" class="canva-text truncate font-bold"></h3><span data-template-id="product-status" class="canva-tag shrink-0 rounded-full px-2.5 py-1 text-xs font-bold"></span>
+      </div>
+      <p data-template-id="product-barcode" class="canva-text mt-1 truncate text-xs"></p>
+      <div class="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-[#42554b]"><span class="inline-flex items-center gap-1"><i data-lucide="calendar-days" class="h-3.5 w-3.5" aria-hidden="true"></i><span data-template-id="product-expiry" class="canva-text"></span></span> <span class="inline-flex items-center gap-1"><i data-lucide="boxes" class="h-3.5 w-3.5" aria-hidden="true"></i><span data-template-id="product-quantity" class="canva-text"></span></span> <span data-template-id="product-category" class="canva-tag rounded-md bg-[#edf0eb] px-1.5 py-0.5"></span>
+      </div>
+     </div>
+    </article>
+   </template>
+   <div id="form-backdrop" class="modal-layer hidden-modal fixed inset-0 z-30 bg-[#18332b]/40"></div>
+   <aside id="product-drawer" class="drawer closed fixed bottom-0 left-0 right-0 z-40 max-h-[90%] overflow-y-auto border-t px-5 pb-8 pt-5 shadow-2xl" style="background:#fffdf8;border-color:#d9dfd6;" aria-label="Cadastro de produto" aria-hidden="true">
+    <div class="mx-auto mb-5 h-1.5 w-12 rounded-full bg-[#c6d0c6]"></div>
+    <div class="mb-5 flex items-start justify-between gap-4">
+     <div>
+      <p data-template-id="form-kicker" class="canva-text text-xs font-bold uppercase tracking-[0.16em]" style="color: rgb(38, 115, 77); font-weight: 700; font-style: normal; font-size: 12px; letter-spacing: 0.12rem;">Cadastro</p>
+      <h2 id="form-title" data-template-id="form-title" class="canva-text display-font mt-1" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 24px;">Novo produto</h2>
+     </div><button id="close-form-button" data-template-id="close-form-button" type="button" class="canva-button inline-flex h-10 w-10 items-center justify-center rounded-full border" style="background:#fffdf8;color:#18332b;border-color:#d9dfd6;" aria-label="Fechar formulário"> <i data-lucide="x" aria-hidden="true"></i> </button>
+    </div>
+    <form id="product-form" novalidate=""><input id="editing-id" type="hidden">
+     <div class="grid gap-4">
+      <div><label data-template-id="name-label" for="product-name-input" class="canva-text mb-1.5 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Nome do produto</label> <input id="product-name-input" data-template-id="name-input" class="canva-input w-full rounded-xl border px-3 py-3" style="background: rgb(255, 255, 255); border-color: rgb(217, 223, 214); color: rgb(24, 51, 43); font-weight: 400; font-style: normal; font-size: 16px;" type="text" required="" placeholder="Ex.: Iogurte natural">
+      </div>
+      <div><label data-template-id="barcode-label" for="barcode-input" class="canva-text mb-1.5 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Código de barras</label>
+       <div class="flex gap-2"><input id="barcode-input" data-template-id="barcode-input" class="canva-input min-w-0 flex-1 rounded-xl border px-3 py-3" style="background: rgb(255, 255, 255); border-color: rgb(217, 223, 214); color: rgb(24, 51, 43); font-weight: 400; font-style: normal; font-size: 16px;" inputmode="numeric" type="text" placeholder="Digite o código"> <button id="scan-button" data-template-id="scan-button" type="button" class="canva-button inline-flex shrink-0 items-center gap-2 rounded-xl border px-3 py-3 text-sm font-bold" style="background: rgb(220, 238, 225); color: rgb(30, 99, 63); border-color: rgb(185, 219, 191); font-weight: 700;"> <i data-lucide="scan-line" class="h-4 w-4" aria-hidden="true"></i> <span data-template-id="scan-button-text" class="canva-text" style="color: rgb(30, 99, 63); font-weight: 700; font-style: normal; font-size: 16px;">Ler</span> </button>
+       </div>
+       <p data-template-id="barcode-help" class="canva-text mt-1.5 text-xs" style="color: rgb(96, 113, 104); font-weight: 400; font-style: normal; font-size: 12px;">Use a digitação manual quando a câmera não estiver disponível.</p>
+      </div>
+      <div><label data-template-id="photo-label" for="photo-url-input" class="canva-text mb-1.5 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Foto do produto</label> <input id="photo-url-input" data-template-id="photo-url-input" class="canva-input w-full rounded-xl border px-3 py-3" style="background: rgb(255, 255, 255); border-color: rgb(217, 223, 214); color: rgb(24, 51, 43); font-weight: 400; font-style: normal; font-size: 16px;" type="url" placeholder="Cole uma URL pública da foto (opcional)">
+       <p data-template-id="photo-help" class="canva-text mt-1.5 text-xs" style="color: rgb(96, 113, 104); font-weight: 400; font-style: normal; font-size: 12px;">A URL da imagem é salva com o produto e poderá aparecer no relatório PDF.</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+       <div><label data-template-id="expiry-label" for="expiry-input" class="canva-text mb-1.5 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Data de validade</label> <input id="expiry-input" class="w-full rounded-xl border bg-white px-3 py-3" style="border-color:#d9dfd6;" type="date" required="">
+       </div>
+       <div><label data-template-id="quantity-label" for="quantity-input" class="canva-text mb-1.5 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Quantidade</label> <input id="quantity-input" class="w-full rounded-xl border bg-white px-3 py-3" style="border-color:#d9dfd6;" type="number" min="0" step="1" required="">
+       </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+       <div><label data-template-id="category-label" for="category-input" class="canva-text mb-1.5 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Categoria</label> <input id="category-input" data-template-id="category-input" class="canva-input w-full rounded-xl border px-3 py-3" style="background: rgb(255, 255, 255); border-color: rgb(217, 223, 214); color: rgb(24, 51, 43); font-weight: 400; font-style: normal; font-size: 16px;" type="text" required="" placeholder="Ex.: Laticínios">
+       </div>
+       <div><label data-template-id="batch-label" for="batch-input" class="canva-text mb-1.5 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Lote</label> <input id="batch-input" data-template-id="batch-input" class="canva-input w-full rounded-xl border px-3 py-3" style="background: rgb(255, 255, 255); border-color: rgb(217, 223, 214); color: rgb(24, 51, 43); font-weight: 400; font-style: normal; font-size: 16px;" type="text" placeholder="Ex.: L-2026-01">
+       </div>
+      </div>
+      <div><label data-template-id="notes-label" for="notes-input" class="canva-text mb-1.5 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Observações</label> <textarea id="notes-input" data-template-id="notes-input" class="canva-input min-h-24 w-full resize-y rounded-xl border px-3 py-3" style="background: rgb(255, 255, 255); border-color: rgb(217, 223, 214); color: rgb(24, 51, 43); font-weight: 400; font-style: normal; font-size: 16px;">Informações adicionais (opcional)</textarea>
+      </div>
+      <p id="form-message" class="hidden rounded-xl px-3 py-2 text-sm font-medium" role="status"></p><button id="save-product-button" data-template-id="save-product-button" type="submit" class="canva-button mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 font-bold shadow-sm transition hover:brightness-95" style="background: rgb(38, 115, 77); color: rgb(255, 255, 255); font-weight: 700;"> <i data-lucide="save" class="h-5 w-5" aria-hidden="true"></i> <span data-template-id="save-product-text" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Salvar produto</span> </button>
+     </div>
+    </form>
+   </aside>
+   <div id="details-modal" class="modal-layer hidden-modal fixed inset-0 z-50 flex items-end bg-[#18332b]/40 p-0 sm:items-center sm:justify-center sm:p-5" role="dialog" aria-modal="true" aria-labelledby="details-title">
+    <section class="max-h-[92%] w-full max-w-xl overflow-y-auto rounded-t-3xl bg-[#fffdf8] p-5 shadow-2xl sm:rounded-3xl">
+     <div class="flex items-start justify-between gap-4">
+      <div>
+       <p data-template-id="details-kicker" class="canva-text text-xs font-bold uppercase tracking-[0.16em]" style="color: rgb(38, 115, 77); font-weight: 700; font-style: normal; font-size: 12px; letter-spacing: 0.12rem;">Detalhes do produto</p>
+       <h2 id="details-title" class="display-font mt-1 text-2xl font-bold"></h2>
+      </div><button id="close-details-button" data-template-id="close-details-button" type="button" class="canva-button inline-flex h-10 w-10 items-center justify-center rounded-full border" style="background:#fffdf8;color:#18332b;border-color:#d9dfd6;" aria-label="Fechar detalhes"> <i data-lucide="x" aria-hidden="true"></i> </button>
+     </div>
+     <div id="details-content" class="mt-5"></div>
+    </section>
+   </div>
+   <div id="settings-modal" class="modal-layer hidden-modal fixed inset-0 z-50 flex items-end bg-[#18332b]/40 sm:items-center sm:justify-center sm:p-5" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <section data-template-id="settings-panel" class="canva-panel w-full max-w-md rounded-t-3xl p-5 shadow-2xl sm:rounded-3xl" style="background:#fffdf8;">
+     <div class="flex items-center justify-between">
+      <h2 id="settings-title" data-template-id="settings-title" class="canva-text display-font" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 24px;">Alertas de validade</h2><button id="close-settings-button" data-template-id="close-settings-button" type="button" class="canva-button inline-flex h-10 w-10 items-center justify-center rounded-full border" style="background:#fffdf8;color:#18332b;border-color:#d9dfd6;" aria-label="Fechar configurações"><i data-lucide="x"></i></button>
+     </div>
+     <form id="settings-form" class="mt-5"><label data-template-id="alert-days-label" for="alert-days-input" class="canva-text mb-2 block text-sm font-bold" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 14px;">Avisar com quantos dias de antecedência?</label> <input id="alert-days-input" class="w-full rounded-xl border bg-white px-3 py-3" style="border-color:#d9dfd6;" type="number" min="1" max="365" required="">
+      <p data-template-id="alert-days-help" class="canva-text mt-2 text-sm" style="color: rgb(96, 113, 104); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.45;">Produtos dentro desse período serão classificados como “Vence em breve”.</p><button id="save-settings-button" data-template-id="save-settings-button" type="submit" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold" style="background: rgb(38, 115, 77); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Salvar configuração</button>
+     </form>
+    </section>
+   </div>
+   <div id="export-modal" class="modal-layer hidden-modal fixed inset-0 z-50 flex items-end bg-[#18332b]/40 sm:items-center sm:justify-center sm:p-5" role="dialog" aria-modal="true" aria-labelledby="export-title">
+    <section data-template-id="export-panel" class="canva-panel w-full max-w-md rounded-t-3xl p-5 shadow-2xl sm:rounded-3xl" style="background:#fffdf8;">
+     <div class="flex items-center justify-between">
+      <h2 id="export-title" data-template-id="export-title" class="canva-text display-font" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 24px;">Exportar relatório PDF</h2><button id="close-export-button" data-template-id="close-export-button" type="button" class="canva-button inline-flex h-10 w-10 items-center justify-center rounded-full border" style="background:#fffdf8;color:#18332b;border-color:#d9dfd6;" aria-label="Fechar exportação"><i data-lucide="x"></i></button>
+     </div>
+     <form id="export-form" class="mt-5 space-y-3"><label class="flex cursor-pointer items-center gap-3 rounded-xl border p-3" style="border-color:#d9dfd6;"> <input type="radio" name="export-scope" value="all" checked=""> <span data-template-id="export-all-label" class="canva-text font-semibold" style="color: rgb(24, 51, 43); font-weight: 600; font-style: normal; font-size: 14px;">Todos os produtos cadastrados</span> </label> <label class="flex cursor-pointer items-center gap-3 rounded-xl border p-3" style="border-color:#d9dfd6;"> <input type="radio" name="export-scope" value="filtered"> <span data-template-id="export-filtered-label" class="canva-text font-semibold" style="color: rgb(24, 51, 43); font-weight: 600; font-style: normal; font-size: 14px;">Apenas os produtos filtrados na tela</span> </label>
+      <p data-template-id="export-help" class="canva-text text-sm" style="color: rgb(96, 113, 104); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.45;">O documento inclui a data de geração, o resumo por status e uma tabela adequada para impressão.</p><button id="generate-pdf-button" data-template-id="generate-pdf-button" type="submit" class="canva-button w-full rounded-xl px-4 py-3 font-bold" style="background: rgb(38, 115, 77); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Gerar PDF</button>
+     </form>
+    </section>
+   </div>
+   <div id="delete-modal" class="modal-layer hidden-modal fixed inset-0 z-[60] flex items-center justify-center bg-[#18332b]/50 p-5" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <section data-template-id="delete-panel" class="canva-panel w-full max-w-sm rounded-3xl p-5 shadow-2xl" style="background:#fffdf8;">
+     <h2 id="delete-title" data-template-id="delete-title" class="canva-text display-font" style="color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 24px;">Excluir produto?</h2>
+     <p data-template-id="delete-description" class="canva-text mt-2 text-sm" style="color: rgb(96, 113, 104); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.45;">Esta ação remove o produto e o histórico salvo. Não será possível desfazer.</p>
+     <div class="mt-5 grid grid-cols-2 gap-3"><button id="cancel-delete-button" data-template-id="cancel-delete-button" type="button" class="canva-button rounded-xl px-3 py-3 font-bold" style="background: rgb(237, 240, 235); color: rgb(24, 51, 43); font-weight: 700; font-style: normal; font-size: 16px;">Cancelar</button> <button id="confirm-delete-button" data-template-id="confirm-delete-button" type="button" class="canva-button rounded-xl px-3 py-3 font-bold" style="background: rgb(185, 67, 67); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Excluir</button>
+     </div>
+    </section>
+   </div>
+   <div id="toast" class="toast fixed bottom-5 left-4 right-4 z-[70] mx-auto max-w-md rounded-2xl px-4 py-3 text-sm font-bold text-white shadow-xl" style="background:#18332b;" role="status" aria-live="polite"></div>
+  </div>
+  <script src="/_sdk/6f16dc4ffc0cf3fe.editing_sdk.js" integrity="sha512-XcGkt+MVg9QK/rlrq9umdkP9LzshVjIu+vaITjWOSFti+dqk5aHBHkCCQ/IXnnUyJtw0F+lYzvT7m4EfPrBrjg=="></script>
+  <script>
+    const state = {
+      products: [],
+      alertDays: 30,
+      selectedId: null,
+      deleteId: null,
+      initialized: false
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function dateAtMidnight(value) {
+      const date = new Date(value + "T00:00:00");
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
+
+    function getStatus(product) {
+      if (product.discarded) return "discarded";
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const expiry = dateAtMidnight(product.expiry_date);
+      const diffDays = Math.ceil((expiry - today) / 86400000);
+      if (diffDays < 0) return "expired";
+      if (diffDays <= state.alertDays) return "soon";
+      return "valid";
+    }
+
+    function statusLabel(status) {
+      return { valid: "Válido", soon: "Vence em breve", expired: "Vencido", discarded: "Descartado" }[status];
+    }
+
+    function formatDate(value) {
+      if (!value) return "Sem data";
+      return new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(new Date(value + "T00:00:00Z"));
+    }
+
+    function activeProducts() {
+      const term = $("search-input").value.trim().toLowerCase();
+      const status = $("status-filter").value;
+      const category = $("category-filter").value;
+      const period = $("period-filter").value;
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+
+      return state.products
+        .filter(product => {
+          const productStatus = getStatus(product);
+          const matchesTerm = !term || product.name.toLowerCase().includes(term) || (product.barcode || "").toLowerCase().includes(term);
+          const matchesStatus = status === "all" || productStatus === status;
+          const matchesCategory = category === "all" || product.category === category;
+          let matchesPeriod = true;
+          const diff = Math.ceil((dateAtMidnight(product.expiry_date) - today) / 86400000);
+          if (period === "past") matchesPeriod = diff < 0;
+          if (!isNaN(Number(period))) matchesPeriod = diff >= 0 && diff <= Number(period);
+          return matchesTerm && matchesStatus && matchesCategory && matchesPeriod;
+        })
+        .sort((a, b) => dateAtMidnight(a.expiry_date) - dateAtMidnight(b.expiry_date));
+    }
+
+    function updateCategoryFilter() {
+      const select = $("category-filter");
+      const current = select.value;
+      const categories = [...new Set(state.products.map(p => p.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+      select.innerHTML = '<option value="all">Todas as categorias</option>';
+      categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        select.appendChild(option);
+      });
+      select.value = categories.includes(current) ? current : "all";
+    }
+
+    function renderSummary() {
+      const counts = { valid: 0, soon: 0, expired: 0 };
+      state.products.forEach(product => {
+        const status = getStatus(product);
+        if (counts[status] !== undefined) counts[status]++;
+      });
+      $("valid-total").textContent = counts.valid;
+      $("soon-total").textContent = counts.soon;
+      $("expired-total").textContent = counts.expired;
+      $("product-count").textContent = `${state.products.length} ${state.products.length === 1 ? "produto cadastrado" : "produtos cadastrados"}`;
+    }
+
+    function createProductCard(product) {
+      const fragment = $("product-template").content.cloneNode(true);
+      const card = fragment.querySelector("article");
+      card.dataset.id = product.__backendId;
+      const status = getStatus(product);
+      const photo = card.querySelector('[data-template-id="product-photo"]');
+      const icon = card.querySelector(".photo-icon");
+
+      card.querySelector('[data-template-id="product-name"]').textContent = product.name;
+      card.querySelector('[data-template-id="product-barcode"]').textContent = product.barcode ? `Código: ${product.barcode}` : "Sem código de barras";
+      card.querySelector('[data-template-id="product-expiry"]').textContent = `Validade: ${formatDate(product.expiry_date)}`;
+      card.querySelector('[data-template-id="product-quantity"]').textContent = `Qtd.: ${product.quantity}`;
+      card.querySelector('[data-template-id="product-category"]').textContent = product.category || "Sem categoria";
+      const badge = card.querySelector('[data-template-id="product-status"]');
+      badge.textContent = statusLabel(status);
+      badge.classList.add(`status-${status}`);
+
+      if (product.photo_url && /^https:\/\//.test(product.photo_url)) {
+        photo.src = product.photo_url;
+        photo.alt = `Foto de ${product.name}`;
+        photo.classList.remove("hidden");
+        icon.classList.add("hidden");
+        photo.addEventListener("error", () => {
+          photo.classList.add("hidden");
+          icon.classList.remove("hidden");
+        }, { once: true });
+      }
+
+      const open = () => openDetails(product.__backendId);
+      card.addEventListener("click", open);
+      card.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); }
+      });
+      return fragment;
+    }
+
+    function renderProducts() {
+      const list = $("product-list");
+      const products = activeProducts();
+      const existing = new Map([...list.children].map(el => [el.dataset.id, el]));
+      products.forEach(product => {
+        const existingCard = existing.get(product.__backendId);
+        if (existingCard) {
+          existingCard.replaceWith(createProductCard(product));
+          existing.delete(product.__backendId);
+        } else {
+          list.appendChild(createProductCard(product));
+        }
+      });
+      existing.forEach(el => el.remove());
+      $("empty-state").classList.toggle("hidden", products.length !== 0);
+      lucide.createIcons();
+    }
+
+    function renderAll() {
+      updateCategoryFilter();
+      renderSummary();
+      renderProducts();
+    }
+
+    function showToast(message, tone = "success") {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.style.background = tone === "error" ? "#b94343" : "#18332b";
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 3400);
+    }
+
+    function setModal(id, open) {
+      $(id).classList.toggle("hidden-modal", !open);
+    }
+
+    function openForm(product = null) {
+      $("product-form").reset();
+      $("form-message").classList.add("hidden");
+      $("editing-id").value = product ? product.__backendId : "";
+      $("form-title").textContent = product ? "Editar produto" : "Novo produto";
+      if (product) {
+        $("product-name-input").value = product.name || "";
+        $("barcode-input").value = product.barcode || "";
+        $("photo-url-input").value = product.photo_url || "";
+        $("expiry-input").value = product.expiry_date || "";
+        $("quantity-input").value = product.quantity ?? 1;
+        $("category-input").value = product.category || "";
+        $("batch-input").value = product.batch || "";
+        $("notes-input").value = product.notes || "";
+      }
+      $("form-backdrop").classList.remove("hidden-modal");
+      $("product-drawer").classList.remove("closed");
+      $("product-drawer").setAttribute("aria-hidden", "false");
+      setTimeout(() => $("product-name-input").focus(), 250);
+    }
+
+    function closeForm() {
+      $("form-backdrop").classList.add("hidden-modal");
+      $("product-drawer").classList.add("closed");
+      $("product-drawer").setAttribute("aria-hidden", "true");
+    }
+
+    function parseHistory(history) {
+      try { return JSON.parse(history || "[]"); } catch { return []; }
+    }
+
+    async function saveProduct(event) {
+      event.preventDefault();
+      const name = $("product-name-input").value.trim();
+      const expiry = $("expiry-input").value;
+      const quantity = Number($("quantity-input").value);
+      const category = $("category-input").value.trim();
+
+      if (!name || !expiry || !category || Number.isNaN(quantity) || quantity < 0) {
+        const message = $("form-message");
+        message.textContent = "Preencha nome, validade, quantidade e categoria corretamente.";
+        message.className = "rounded-xl bg-[#f9d9d7] px-3 py-2 text-sm font-medium text-[#9e3535]";
+        return;
+      }
+
+      const button = $("save-product-button");
+      button.disabled = true;
+      button.classList.add("opacity-60");
+      const id = $("editing-id").value;
+      const existing = state.products.find(product => product.__backendId === id);
+      const now = new Date().toISOString();
+      const history = existing ? parseHistory(existing.history) : [];
+      history.push({ date: now, action: existing ? "Produto atualizado" : "Produto cadastrado" });
+
+      const payload = {
+        name,
+        barcode: $("barcode-input").value.trim(),
+        photo_url: $("photo-url-input").value.trim(),
+        expiry_date: expiry,
+        quantity,
+        category,
+        batch: $("batch-input").value.trim(),
+        notes: $("notes-input").value.trim(),
+        status: existing ? getStatus({ ...existing, expiry_date: expiry, discarded: existing.discarded }) : "valid",
+        discarded: existing ? existing.discarded : false,
+        history: JSON.stringify(history),
+        created_at: existing ? existing.created_at : now,
+        updated_at: now,
+        alert_days: state.alertDays
+      };
+
+      const result = existing
+        ? await window.dataSdk.update({ ...existing, ...payload })
+        : (state.products.length >= 999 ? { isOk: false, error: new Error("Limite de 999 produtos atingido.") } : await window.dataSdk.create(payload));
+
+      button.disabled = false;
+      button.classList.remove("opacity-60");
+      if (!result.isOk) {
+        const message = $("form-message");
+        message.textContent = result.error?.message || "Não foi possível salvar o produto.";
+        message.className = "rounded-xl bg-[#f9d9d7] px-3 py-2 text-sm font-medium text-[#9e3535]";
+        return;
+      }
+      closeForm();
+      showToast(existing ? "Produto atualizado com sucesso." : "Produto cadastrado com sucesso.");
+    }
+
+    function openDetails(id) {
+      const product = state.products.find(item => item.__backendId === id);
+      if (!product) return;
+      state.selectedId = id;
+      const status = getStatus(product);
+      const history = parseHistory(product.history);
+      const photoHtml = product.photo_url && /^https:\/\//.test(product.photo_url)
+        ? `<img src="${escapeHtml(product.photo_url)}" alt="Foto de ${escapeHtml(product.name)}" class="h-52 w-full rounded-2xl object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : "";
+      $("details-title").textContent = product.name;
+      $("details-content").innerHTML = `
+        <div class="photo-fallback ${photoHtml ? "" : "flex"} h-52 items-center justify-center overflow-hidden rounded-2xl">
+          ${photoHtml}<div class="${photoHtml ? "hidden" : "flex"} h-full w-full items-center justify-center text-[#607168]"><i data-lucide="package" class="h-12 w-12"></i></div>
+        </div>
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <span class="status-${status} rounded-full px-3 py-1.5 text-sm font-bold">${statusLabel(status)}</span>
+          <span class="text-sm text-[#607168]">Código: ${escapeHtml(product.barcode || "—")}</span>
+        </div>
+        <dl class="mt-5 grid grid-cols-2 gap-3 text-sm">
+          ${detailItem("Validade", formatDate(product.expiry_date))}
+          ${detailItem("Quantidade", String(product.quantity))}
+          ${detailItem("Categoria", product.category || "—")}
+          ${detailItem("Lote", product.batch || "—")}
+        </dl>
+        <div class="mt-4 rounded-2xl bg-[#edf0eb] p-4"><p class="text-xs font-bold uppercase tracking-wide text-[#607168]">Observações</p><p class="mt-1 text-sm">${escapeHtml(product.notes || "Nenhuma observação.")}</p></div>
+        <section class="mt-5"><h3 class="font-bold">Histórico de alterações</h3><ol class="mt-2 space-y-2">${history.slice().reverse().map(item => `<li class="rounded-xl border border-[#d9dfd6] bg-white p-3 text-sm"><strong>${escapeHtml(item.action)}</strong><br><span class="text-xs text-[#607168]">${new Date(item.date).toLocaleString("pt-BR")}</span></li>`).join("") || "<li class='text-sm text-[#607168]'>Sem histórico disponível.</li>"}</ol></section>
+        <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <button id="detail-edit" type="button" class="rounded-xl bg-[#26734d] px-4 py-3 font-bold text-white">Editar</button>
+          <button id="detail-discard" type="button" class="rounded-xl bg-[#fce7c7] px-4 py-3 font-bold text-[#9a551a]">${product.discarded ? "Restaurar produto" : "Marcar como descartado"}</button>
+          <button id="detail-delete" type="button" class="rounded-xl bg-[#f9d9d7] px-4 py-3 font-bold text-[#9e3535]">Excluir</button>
+        </div>`;
+      setModal("details-modal", true);
+      lucide.createIcons();
+      $("detail-edit").addEventListener("click", () => { setModal("details-modal", false); openForm(product); });
+      $("detail-discard").addEventListener("click", () => toggleDiscard(product));
+      $("detail-delete").addEventListener("click", () => { setModal("details-modal", false); requestDelete(product.__backendId); });
+    }
+
+    function detailItem(label, value) {
+      return `<div class="rounded-xl border border-[#d9dfd6] bg-white p-3"><dt class="text-xs font-bold uppercase tracking-wide text-[#607168]">${label}</dt><dd class="mt-1 font-semibold">${escapeHtml(value)}</dd></div>`;
+    }
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[character]);
+    }
+
+    async function toggleDiscard(product) {
+      const history = parseHistory(product.history);
+      const discarded = !product.discarded;
+      history.push({ date: new Date().toISOString(), action: discarded ? "Produto marcado como descartado" : "Produto restaurado" });
+      const result = await window.dataSdk.update({ ...product, discarded, history: JSON.stringify(history), updated_at: new Date().toISOString() });
+      if (!result.isOk) showToast("Não foi possível atualizar o produto.", "error");
+      else { setModal("details-modal", false); showToast(discarded ? "Produto marcado como descartado." : "Produto restaurado."); }
+    }
+
+    function requestDelete(id) {
+      state.deleteId = id;
+      setModal("delete-modal", true);
+    }
+
+    async function confirmDelete() {
+      const product = state.products.find(item => item.__backendId === state.deleteId);
+      if (!product) return;
+      const button = $("confirm-delete-button");
+      button.disabled = true;
+      const result = await window.dataSdk.delete(product);
+      button.disabled = false;
+      if (!result.isOk) showToast("Não foi possível excluir o produto.", "error");
+      else showToast("Produto excluído.");
+      setModal("delete-modal", false);
+      state.deleteId = null;
+    }
+
+    async function saveSettings(event) {
+      event.preventDefault();
+      const days = Number($("alert-days-input").value);
+      if (!days || days < 1 || days > 365) { showToast("Informe um período entre 1 e 365 dias.", "error"); return; }
+      state.alertDays = days;
+      const button = $("save-settings-button");
+      button.disabled = true;
+      const records = state.products.map(product => ({ ...product, alert_days: days, updated_at: new Date().toISOString() }));
+      for (const record of records) {
+        const result = await window.dataSdk.update(record);
+        if (!result.isOk) { showToast("Não foi possível salvar a configuração.", "error"); button.disabled = false; return; }
+      }
+      button.disabled = false;
+      setModal("settings-modal", false);
+      renderAll();
+      showToast("Período de alerta atualizado.");
+    }
+
+    async function generatePdf(event) {
+      event.preventDefault();
+      const scope = document.querySelector('input[name="export-scope"]:checked').value;
+      const products = scope === "all" ? [...state.products].sort((a,b) => dateAtMidnight(a.expiry_date) - dateAtMidnight(b.expiry_date)) : activeProducts();
+      const button = $("generate-pdf-button");
+      button.disabled = true;
+      button.textContent = "Gerando relatório...";
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+        const counts = { valid: 0, soon: 0, expired: 0 };
+        products.forEach(product => { const s = getStatus(product); if (counts[s] !== undefined) counts[s]++; });
+        doc.setFillColor(24, 51, 43); doc.rect(0, 0, 297, 28, "F");
+        doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.text("Relatório de Controle de Validade", 14, 15);
+        doc.setFontSize(9); doc.text(`Gerado em ${new Date().toLocaleString("pt-BR")}`, 14, 22);
+        doc.setTextColor(24, 51, 43); doc.setFontSize(11);
+        doc.text(`Resumo: ${counts.valid} válidos  |  ${counts.soon} vencendo em breve  |  ${counts.expired} vencidos`, 14, 38);
+        doc.autoTable({
+          startY: 44,
+          head: [["Produto", "Código", "Validade", "Qtd.", "Categoria", "Lote", "Status"]],
+          body: products.map(product => [product.name, product.barcode || "—", formatDate(product.expiry_date), String(product.quantity), product.category || "—", product.batch || "—", statusLabel(getStatus(product))]),
+          styles: { fontSize: 8, cellPadding: 2.5 },
+          headStyles: { fillColor: [38, 115, 77] },
+          alternateRowStyles: { fillColor: [245, 243, 235] }
+        });
+        doc.save(`controle-validade-${new Date().toISOString().slice(0,10)}.pdf`);
+        setModal("export-modal", false);
+        showToast("PDF exportado com sucesso.");
+      } catch (error) {
+        showToast("Não foi possível gerar o PDF.", "error");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Gerar PDF";
+      }
+    }
+
+    const dataHandler = {
+      onDataChanged(data) {
+        state.products = data;
+        const storedSetting = [...data].reverse().find(product => Number(product.alert_days) > 0);
+        if (storedSetting) state.alertDays = Number(storedSetting.alert_days);
+        $("alert-days-input").value = state.alertDays;
+        renderAll();
+      }
+    };
+
+    async function initialize() {
+      const result = await window.dataSdk.init(dataHandler);
+      if (!result.isOk) showToast("Não foi possível carregar os produtos salvos.", "error");
+      state.initialized = result.isOk;
+    }
+
+    $("add-product-button").addEventListener("click", () => openForm());
+    $("close-form-button").addEventListener("click", closeForm);
+    $("form-backdrop").addEventListener("click", closeForm);
+    $("product-form").addEventListener("submit", saveProduct);
+    $("search-input").addEventListener("input", renderProducts);
+    ["status-filter", "category-filter", "period-filter"].forEach(id => $(id).addEventListener("change", renderProducts));
+
+    $("settings-button").addEventListener("click", () => { $("alert-days-input").value = state.alertDays; setModal("settings-modal", true); });
+    $("close-settings-button").addEventListener("click", () => setModal("settings-modal", false));
+    $("settings-form").addEventListener("submit", saveSettings);
+
+    $("open-export-button").addEventListener("click", () => setModal("export-modal", true));
+    $("close-export-button").addEventListener("click", () => setModal("export-modal", false));
+    $("export-form").addEventListener("submit", generatePdf);
+
+    $("close-details-button").addEventListener("click", () => setModal("details-modal", false));
+    $("cancel-delete-button").addEventListener("click", () => setModal("delete-modal", false));
+    $("confirm-delete-button").addEventListener("click", confirmDelete);
+
+    $("scan-button").addEventListener("click", () => {
+      showToast("A leitura por câmera não está disponível neste ambiente. Digite o código manualmente.", "error");
+      $("barcode-input").focus();
+    });
+
+    lucide.createIcons();
+    initialize();
+  </script>
+ 
+</body></html>
